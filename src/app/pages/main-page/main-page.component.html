@@ -1,0 +1,117 @@
+<div class="container-xl">
+  <h1 class="title">Poetryfn</h1>
+  <div class="subtitle">Best viewed with minimum width 1024px</div>
+  <div class="container">
+    <div class="row">
+      <div class="col-5">
+
+        <div class="card">
+          <div class="card-body">
+            
+            <div class="game-over alert alert-success" *ngIf="isGameOver">{{gameOverMessage}}</div>
+
+            <div class="row team-row">
+              <div class="col">
+                <div class="team-score">{{teamGladScore}}</div>
+                <div class="team-name">Team Glad</div>
+                <ul class="list-group">
+                  <li class="list-group-item" [class.active]="isTeamGladTurn && teamGladIndex === i" *ngFor="let p of teamGlad; index as i">{{p}}</li>
+                </ul>
+              </div>
+              <div class="col">
+                <div class="team-score">{{teamSadScore}}</div>
+                <div class="team-name">Team Sad</div>
+                <ul class="list-group">
+                  <li class="list-group-item" [class.active]="!isTeamGladTurn && teamSadIndex === i" *ngFor="let p of teamSad; index as i">{{p}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="player-input" [hidden]="hidePlayerInput">
+          Enter players (separated by newline):
+          <div class="input-group">
+            <textarea class="form-control players-field" [(ngModel)]="playerText" (input)="onPlayersInput($event)"></textarea>
+          </div>
+          <div class="small-players-count">Players: {{playerCount}}</div>
+          <div class="button-row">
+            <button type="button" [disabled]="playerCount < 2" class="btn btn-primary" (click)="randomTeam()">Ramdomise teams</button>
+          </div>
+        </div>
+        
+      </div>
+      <div class="col-7">
+        <div class="row">
+          <div class="card">
+            <div class="card-body">
+              
+              <ng-container *ngIf="!isTimerSet">
+                <div class="countdown-finish-subtitle">Set the timer length</div>
+                <div class="countdown-buttons-row">
+                  <button type="button" (click)="setTimer(1)" class="btn btn-info btn-lg">1 min</button>
+                  <button type="button" (click)="setTimer(2)" class="btn btn-info btn-lg">2 mins</button>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="isTimerSet">
+                <ng-container *ngIf="!isTimesUp">
+                  <div class="countdown">
+                    {{minute}}:{{second | number: '2.0-0'}}
+                  </div>
+                  <div class="countdown-buttons-row">
+                    <button type="button" [disabled]="!isGameSet || isTimerStarted" (click)="startTimer()" class="btn btn-primary btn-lg">Start</button>
+                    <button type="button" [disabled]="!isGameSet || !isTimerStarted" (click)="stopTimer()" class="btn btn-danger btn-lg">Stop</button>
+                    <button type="button" [disabled]="!isGameSet" (click)="resetTimer()" class="btn btn-warning btn-lg">Reset</button>
+                  </div>
+                </ng-container>
+                
+                <ng-container *ngIf="isTimesUp">
+                  <div class="countdown-finish">TIME'S UP!</div>
+                  <ng-container *ngIf="!isGameOver">
+                    <div class="countdown-finish-subtitle">It is now Team {{ !isTeamGladTurn ? "Glad's" : "Sad's" }} turn.</div>
+                    <div class="countdown-buttons-row">
+                      <button type="button" (click)="nextTurn()" class="btn btn-primary btn-lg">Next turn</button>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="row score-row">
+          <div class="col card spacing">
+            <div class="card-body">
+              <div class="team-name">Team Glad</div>
+              <div class="score-buttons-row">
+                <button type="button" [disabled]="!isGameSet || isGameOver || !isTeamGladTurn" (click)="modifyGladPoints(3)" class="score-btn btn btn-success btn-lg">+3</button>
+                <button type="button" [disabled]="!isGameSet || isGameOver || !isTeamGladTurn" (click)="modifyGladPoints(1)" class="score-btn btn btn-success btn-lg">+1</button>
+                <button type="button" [disabled]="!isGameSet || isGameOver || !isTeamGladTurn" (click)="modifyGladPoints(-1)" class="score-btn btn btn-danger btn-lg">-1</button>
+              </div>
+            </div>
+          </div>
+          <div class="col card">
+            <div class="card-body">
+              <div class="team-name">Team Sad</div>
+              <div class="score-buttons-row">
+                <button type="button" [disabled]="!isGameSet || isGameOver || isTeamGladTurn" (click)="modifySadPoints(3)" class="score-btn btn btn-success btn-lg">+3</button>
+                <button type="button" [disabled]="!isGameSet || isGameOver || isTeamGladTurn" (click)="modifySadPoints(1)" class="score-btn btn btn-success btn-lg">+1</button>
+                <button type="button" [disabled]="!isGameSet || isGameOver || isTeamGladTurn" (click)="modifySadPoints(-1)" class="score-btn btn btn-danger btn-lg">-1</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" [hidden]="!isGameSet">
+          <div class="game-row">
+            <button type="button" (click)="resetAndRandomize()" class="btn btn-outline-primary">Reset & shuffle same players</button>
+            <button type="button" (click)="resetCompletely()" class="btn btn-outline-secondary">Reset completely</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
